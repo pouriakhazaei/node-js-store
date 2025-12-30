@@ -15,6 +15,12 @@ model User {
   role      Role       @default(USER)
   createdAt DateTime   @default(now())
   cartItems CartItem[] 
+  orders    Order[] 
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Product {
@@ -27,6 +33,7 @@ model Product {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   cartItems   CartItem[] 
+  orderItems  OrderItem[]
 }
 
 model CartItem {
@@ -41,7 +48,28 @@ model CartItem {
   @@unique([userId, productId])
 }
 
-enum Role {
-  USER
-  ADMIN
+model Order {
+  id        Int         @id @default(autoincrement())
+  user      User        @relation(fields: [userId], references: [id])
+  userId    Int
+  items     OrderItem[]
+  total     Float
+  createdAt DateTime    @default(now())
+  status OrderStatus @default(PENDING)
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+}
+
+model OrderItem {
+  id        Int       @id @default(autoincrement())
+  order     Order     @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product   @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
+  price     Float 
 }

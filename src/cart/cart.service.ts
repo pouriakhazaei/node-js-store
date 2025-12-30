@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const getCartItems = async (userId: number) => {
+export const getCartItems = (userId: number) => {
     return prisma.cartItem.findMany({
         where: { userId },
         include: { product: true }
